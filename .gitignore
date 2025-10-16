@@ -1,0 +1,31 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android
+**/local.properties
+**/*.iml
+**/.gradle/
+**/app/*.keystore
+
+# iOS
+ios/Pods/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Generated native build outputs
+**/*.apk
+**/*.aab
+**/*.ipa
+
+# Editor files
+.idea/
+.vscode/
+*.log
+
+# macOS
+.DS_Store
