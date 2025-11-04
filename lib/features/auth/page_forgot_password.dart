@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
 import 'package:hiwaygo/core/constants/app_strings.dart';
 import 'package:hiwaygo/core/widgets/app_name_and_logo_widget.dart';
-import 'package:hiwaygo/core/widgets/common_button_large.dart';
-import 'package:hiwaygo/core/widgets/common_password_field.dart';
-import 'package:hiwaygo/core/widgets/common_text_field.dart';
+import 'package:hiwaygo/core/widgets/button_widget.dart';
+import 'package:hiwaygo/core/widgets/text_field_password_widget.dart';
+import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
 import 'package:hiwaygo/routes.dart';
 
 class PageForgotPassword extends StatefulWidget {
@@ -60,7 +60,7 @@ class _PageSignInState extends State<PageForgotPassword> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: AppColors.colorTealBlue.withOpacity(0.5),
+            color: AppColors.colorTealBlue.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 3,
             offset: const Offset(0, 3)
@@ -78,9 +78,9 @@ class _PageSignInState extends State<PageForgotPassword> {
             AppNameAndLogoWidget(size: size, pageName: AppStrings.forgotPassword),
             SizedBox(height: size.height * textFieldSpacing,),
             //email , password textField and rememberForget text here
-            CommonTextField(size: size, textEditingController: emailController, inputValueType: AppStrings.email, formKey: _formKey),
+            TextFieldCommonWidget(size: size, textEditingController: emailController, inputValueType: AppStrings.email, formKey: _formKey),
             SizedBox(height: size.height * textFieldSpacing),
-            CommonButtonLarge(
+            ButtonWidget(
               size: size,
               buttonText: AppStrings.forgotPassword,
               onTap: (){

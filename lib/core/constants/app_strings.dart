@@ -52,4 +52,22 @@ class AppStrings{
   static final RegExp oldNicRegex = RegExp(r'^\d{9}[vVxX]$');
   static final RegExp phoneRegex = RegExp(r'^(?:7[0-9]|11|2[1-7]|3[1-8]|4[157]|5[12457]|6[03567]|81|91)[0-9]{7}$');
   static final RegExp emailRegex = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+  ///Home Page related strings
+  static const String busBooking = "Bus Booking";
+  static const String liveBusTracing = "Live Bus Tracing";
+  static const String busSchedule = "Bus Schedule";
+  static const String contactUs = "Contact Us";
+  static const String aboutUs = "About Us";
+  static const String activityHistory = "Activity History";
+  static const String logout = "Logout";
+
+  ///Bus Booking Page related strings
+  static const String from = "From";
+  static const String to = "To";
+  static const String date = "Date";
+  static const String time = "Time";
+  static const String search = "Search";
+
+
 }

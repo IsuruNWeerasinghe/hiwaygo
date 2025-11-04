@@ -3,13 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
 import 'package:flutter_svg/svg.dart';
 
-class CommonSocialMediaButton extends StatelessWidget{
+class SocialMediaButtonWidget extends StatelessWidget{
   final Size size;
   final String buttonText;
   final String svgString;
   final Color buttonColor;
   final VoidCallback onTap;
-  const CommonSocialMediaButton({
+  const SocialMediaButtonWidget({
     super.key,
     required this.size,
     required this.buttonText,

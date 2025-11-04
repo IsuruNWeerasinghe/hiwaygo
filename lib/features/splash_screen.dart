@@ -4,7 +4,7 @@
 // import 'package:flutter_svg/svg.dart';
 // import 'package:google_fonts/google_fonts.dart';
 //
-// import 'main_screen.dart';
+// import 'page_home.dart';
 //
 // class SplashScreen extends StatefulWidget {
 //   const SplashScreen({super.key});

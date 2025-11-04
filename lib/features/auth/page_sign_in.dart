@@ -5,10 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
 import 'package:hiwaygo/core/constants/app_strings.dart';
 import 'package:hiwaygo/core/widgets/app_name_and_logo_widget.dart';
-import 'package:hiwaygo/core/widgets/common_button_large.dart';
-import 'package:hiwaygo/core/widgets/common_password_field.dart';
-import 'package:hiwaygo/core/widgets/common_social_media_button.dart';
-import 'package:hiwaygo/core/widgets/common_text_field.dart';
+import 'package:hiwaygo/core/widgets/button_widget.dart';
+import 'package:hiwaygo/core/widgets/text_field_password_widget.dart';
+import 'package:hiwaygo/core/widgets/social_media_button_widget.dart';
+import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
 import 'package:hiwaygo/routes.dart';
 
 class PageSignIn extends StatefulWidget {
@@ -24,6 +24,27 @@ class _PageSignInState extends State<PageSignIn> {
   late GlobalKey emailKey, passwordKey;
   final _formKey = GlobalKey<FormState>();
   late bool isRememberMe = false;
+
+  // Function to show the exit confirmation dialog
+  Future<bool> _showExitConfirmation(BuildContext context) async {
+    return (await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Exit Application?'),
+        content: const Text('Do you want to close the app?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false), // Stay
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true), // Close
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    )) ?? false; // Return false if the dialog is dismissed
+  }
 
   @override
   void initState() {
@@ -47,16 +68,35 @@ class _PageSignInState extends State<PageSignIn> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFFF8F8F8),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            buildBody(size),
-            footerWidget(size),
-          ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) {
+          return;
+        }
+        final bool shouldClose = await _showExitConfirmation(context);
+        if (shouldClose) {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context, true);
+          } else {
+            // If this is the root route, the platform handles the app exit
+            // when we signal the PopScope is complete.
+            // Typically, you'd use SystemNavigator.pop() or let the system
+            // handle the exit flow naturally after this point if it's the root.
+          }
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: AppColors.colorBackground ,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              buildBody(size),
+              footerWidget(size),
+            ],
+          ),
         ),
       ),
     );
@@ -73,7 +113,7 @@ class _PageSignInState extends State<PageSignIn> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-              color: AppColors.colorTealBlue.withOpacity(0.5),
+              color: AppColors.colorTealBlue.withOpacity(0.2),
               spreadRadius: 1,
               blurRadius: 3,
               offset: const Offset(0, 3)
@@ -90,13 +130,13 @@ class _PageSignInState extends State<PageSignIn> {
             //logo & login text here
             AppNameAndLogoWidget(size: size, pageName: AppStrings.signIn),
             SizedBox(height: size.height * textFieldSpacing),
-            CommonTextField(size: size, textEditingController: emailController, inputValueType: AppStrings.email, formKey: emailKey),
+            TextFieldCommonWidget(size: size, textEditingController: emailController, inputValueType: AppStrings.email, formKey: emailKey),
             SizedBox(height: size.height * textFieldSpacing),
             CommonPasswordField(size: size, textEditingController: passwordController, inputValueType: AppStrings.password, formKey: passwordKey),
             SizedBox(height: size.height * textFieldSpacing),
             buildRemember_ForgetSection(size),
             SizedBox(height: size.height * textFieldSpacing),
-            CommonButtonLarge(
+            ButtonWidget(
               size: size,
               buttonText: AppStrings.signIn,
               onTap: (){
@@ -105,6 +145,7 @@ class _PageSignInState extends State<PageSignIn> {
                     const SnackBar(content: Text('Processing Data')),
                   );
                 } else {
+                  Navigator.popAndPushNamed(context, Routes.homePage);
                   print('Form is invalid.');
                 }
               },
@@ -213,7 +254,7 @@ class _PageSignInState extends State<PageSignIn> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         //google button
-        CommonSocialMediaButton(
+        SocialMediaButtonWidget(
           size: size,
           buttonText: AppStrings.google,
           svgString: AppStrings.googleSvgIcon,
@@ -222,7 +263,7 @@ class _PageSignInState extends State<PageSignIn> {
         ),
         const SizedBox(width: 16),
         //facebook button
-        CommonSocialMediaButton(
+        SocialMediaButtonWidget(
           size: size,
           buttonText: AppStrings.facebook,
           svgString: AppStrings.facebookSvgIcon,
