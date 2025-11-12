@@ -186,7 +186,7 @@ class _PageHomeState extends State<PageHome> {
                         MainMenuItemWidget(
                             size: size,
                             menuTitle: AppStrings.activityHistory,
-                          onTap: (){},
+                          onTap: (){Navigator.popAndPushNamed(context, Routes.activityHistoryPage);},
                         ),
                         MainMenuItemWidget(
                             size: size,

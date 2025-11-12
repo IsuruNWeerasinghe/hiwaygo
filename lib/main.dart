@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hiwaygo/features/activity_history/page_activity_history.dart';
 import 'package:hiwaygo/features/auth/page_forgot_password.dart';
 import 'package:hiwaygo/features/auth/page_sign_in.dart';
 import 'package:hiwaygo/features/auth/page_sign_up.dart';
@@ -28,6 +29,7 @@ void main() async{
           Routes.selectBusTrackingDetailsPage: (context) => PageSelectBusTrackingDetails(),
           Routes.addBookingDetailsPage: (context) => PageAddBookingDetails(),
           Routes.bookingDetailsListPage: (context) => PageBookingDetailsList(),
+          Routes.activityHistoryPage: (context) => PageActivityHistory(),
         },
       ),
     ),

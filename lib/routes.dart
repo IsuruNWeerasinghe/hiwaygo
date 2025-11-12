@@ -1,3 +1,4 @@
+import 'package:hiwaygo/features/activity_history/page_activity_history.dart';
 import 'package:hiwaygo/features/auth/page_forgot_password.dart';
 import 'package:hiwaygo/features/auth/page_sign_in.dart';
 import 'package:hiwaygo/features/auth/page_sign_up.dart';
@@ -16,4 +17,5 @@ class Routes{
   static const String homePage = PageHome.routeName;
   static const String addBookingDetailsPage = PageAddBookingDetails.routeName;
   static const String bookingDetailsListPage = PageBookingDetailsList.routeName;
+  static const String activityHistoryPage = PageActivityHistory.routeName;
 }
