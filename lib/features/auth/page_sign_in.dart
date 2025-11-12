@@ -48,11 +48,11 @@ class _PageSignInState extends State<PageSignIn> {
 
   @override
   void initState() {
-    super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
     emailKey = GlobalKey<FormState>();
     passwordKey = GlobalKey<FormState>();
+    super.initState();
   }
 
   @override

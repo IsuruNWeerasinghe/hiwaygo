@@ -42,6 +42,9 @@ class _TextFieldCommonWidget extends State<TextFieldCommonWidget> {
     }else if(widget.inputValueType == AppStrings.phone){
       textInputType = TextInputType.phone;
       textIcon = Icons.phone;
+    }else if(widget.inputValueType == AppStrings.seatCount){
+      textInputType = TextInputType.number;
+      textIcon = Icons.people;
     }
 
     return SizedBox(
@@ -50,70 +53,70 @@ class _TextFieldCommonWidget extends State<TextFieldCommonWidget> {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: AppColors.colorBlack.withOpacity(0.1), // very light shadow
-              blurRadius: 6, // softness
-              offset: const Offset(0, 3), // position (downward)
+              color: AppColors.colorBlack.withOpacity(0.1),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
             ),
           ],
           borderRadius: BorderRadius.circular(40),
         ),
-        child: TextFormField(
-          controller: widget.textEditingController,
-          style: GoogleFonts.inter(
-            fontSize: 18.0,
-            color: const Color(0xFF151624),
-          ),
-          maxLines: 1,
-          keyboardType: textInputType,
-          cursorColor: const Color(0xFF151624),
-          decoration: InputDecoration(
-            hintText: AppStrings.enterYour + widget.inputValueType,
-            hintStyle: GoogleFonts.inter(
-              fontSize: 16.0,
-              color: const Color(0xFF151624).withOpacity(0.5),
-            ),
-            fillColor: widget.textEditingController.text.isNotEmpty
-                ? Colors.transparent
-                : const Color.fromRGBO(248, 247, 251, 1),
-            filled: true,
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(40),
-                borderSide: BorderSide(
+          child: TextFormField(
+              controller: widget.textEditingController,
+              style: GoogleFonts.inter(
+                fontSize: 18.0,
+                color: const Color(0xFF151624),
+              ),
+              maxLines: 1,
+              keyboardType: textInputType,
+              cursorColor: const Color(0xFF151624),
+              decoration: InputDecoration(
+                hintText: AppStrings.enterYour + widget.inputValueType,
+                hintStyle: GoogleFonts.inter(
+                  fontSize: 16.0,
+                  color: const Color(0xFF151624).withOpacity(0.5),
+                ),
+                fillColor: widget.textEditingController.text.isNotEmpty
+                    ? Colors.transparent
+                    : const Color.fromRGBO(248, 247, 251, 1),
+                filled: true,
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(40),
+                    borderSide: BorderSide(
+                      color: widget.textEditingController.text.isEmpty
+                          ? Colors.transparent
+                          : AppColors.colorCyanPulse,
+                    )),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(40),
+                    borderSide: const BorderSide(
+                      color: AppColors.colorCyanPulse,
+                    )),
+                prefixIcon: Icon(
+                  textIcon,
                   color: widget.textEditingController.text.isEmpty
-                      ? Colors.transparent
+                      ? const Color(0xFF151624).withOpacity(0.5)
                       : AppColors.colorCyanPulse,
-                )),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(40),
-                borderSide: const BorderSide(
-                  color: AppColors.colorCyanPulse,
-                )),
-            prefixIcon: Icon(
-              textIcon,
-              color: widget.textEditingController.text.isEmpty
-                  ? const Color(0xFF151624).withOpacity(0.5)
-                  : AppColors.colorCyanPulse,
-              size: 16,
-            ),
-            suffix: Container(
-              alignment: Alignment.center,
-              width: 24.0,
-              height: 24.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100.0),
-                color: AppColors.colorCyanPulse,
+                  size: 16,
+                ),
+                suffix: Container(
+                  alignment: Alignment.center,
+                  width: 24.0,
+                  height: 24.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100.0),
+                    color: AppColors.colorCyanPulse,
+                  ),
+                  child: widget.textEditingController.text.isEmpty
+                      ? const Center()
+                      : const Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 13,
+                  ),
+                ),
               ),
-              child: widget.textEditingController.text.isEmpty
-                  ? const Center()
-                  : const Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 13,
-              ),
-            ),
-          ),
-          validator: (value){
-            if (value == null || value.isEmpty) {
+              validator: (value){
+                  if (value == null || value.isEmpty) {
               return widget.inputValueType + AppStrings.cannotEmpty; // Error message
             }
             if(widget.inputValueType == AppStrings.nic && !CustomValidationUtil.validateNic(value)){

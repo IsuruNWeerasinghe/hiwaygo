@@ -5,6 +5,7 @@ import 'package:hiwaygo/core/constants/app_strings.dart';
 import 'package:hiwaygo/core/widgets/app_name_and_logo_widget.dart';
 import 'package:hiwaygo/core/widgets/main_menu_item_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:hiwaygo/routes.dart';
 
 class PageHome extends StatefulWidget{
   static const String routeName = '/page_home';
@@ -168,23 +169,35 @@ class _PageHomeState extends State<PageHome> {
                       crossAxisCount: 3,
                       children: <Widget>[
                         MainMenuItemWidget(
-                            size: size,
-                            menuTitle: AppStrings.busBooking),
+                          size: size,
+                          menuTitle: AppStrings.busBooking,
+                          onTap: (){Navigator.popAndPushNamed(context, Routes.bookingDetailsListPage);},
+                        ),
                         MainMenuItemWidget(
                             size: size,
-                            menuTitle: AppStrings.liveBusTracing),
+                            menuTitle: AppStrings.liveBusTracing,
+                          onTap: (){Navigator.popAndPushNamed(context, Routes.selectBusTrackingDetailsPage);},
+                        ),
                         MainMenuItemWidget(
                             size: size,
-                            menuTitle: AppStrings.busSchedule),
+                            menuTitle: AppStrings.busSchedule,
+                          onTap: (){},
+                        ),
                         MainMenuItemWidget(
                             size: size,
-                            menuTitle: AppStrings.activityHistory),
+                            menuTitle: AppStrings.activityHistory,
+                          onTap: (){},
+                        ),
                         MainMenuItemWidget(
                             size: size,
-                            menuTitle: AppStrings.contactUs),
+                            menuTitle: AppStrings.contactUs,
+                          onTap: (){},
+                        ),
                         MainMenuItemWidget(
                             size: size,
-                            menuTitle: AppStrings.aboutUs),
+                            menuTitle: AppStrings.aboutUs,
+                          onTap: (){},
+                        ),
                       ]
                   ),
                 ),

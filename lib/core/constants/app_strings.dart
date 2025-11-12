@@ -63,11 +63,21 @@ class AppStrings{
   static const String logout = "Logout";
 
   ///Bus Booking Page related strings
+  static const String busTracingDetails = "Bus Tracking Details";
   static const String from = "From";
   static const String to = "To";
   static const String date = "Date";
   static const String time = "Time";
   static const String search = "Search";
+  static const String seatCount = "Seat Count";
+  static const String available = "Available";
+  static const String booked = "Booked";
+  static const String addNewBooking = "Add New Booking";
+  static const String bookingHistory = "Booking History";
+  static const String deleteBooking = "Delete Booking?";
+  static const String deleteBookingConfirmation = "Are you sure you want to delete this booking? This action cannot be undone.";
+  static const String deleteBookingActionYes = "Yes, Delete";
+  static const String deleteBookingActionNo = "No, Keep";
 
 
 }
