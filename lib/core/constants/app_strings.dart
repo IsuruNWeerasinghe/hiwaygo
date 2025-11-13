@@ -2,6 +2,8 @@
 class AppStrings{
   ///Common Strings
   static const String space = " ";
+  static const String loadingPleaseWait = "Loading...";
+  static const String loadingCompleted = "Loading Completed";
 
   /// App Name
   static const String appNameHi = "Hi";

@@ -6,6 +6,7 @@ import 'package:hiwaygo/core/constants/app_colors.dart';
 import 'package:hiwaygo/core/constants/app_strings.dart';
 import 'package:hiwaygo/core/widgets/app_name_and_logo_widget.dart';
 import 'package:hiwaygo/core/widgets/button_widget.dart';
+import 'package:hiwaygo/core/widgets/loader_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_password_widget.dart';
 import 'package:hiwaygo/core/widgets/social_media_button_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
@@ -24,6 +25,20 @@ class _PageSignInState extends State<PageSignIn> {
   late GlobalKey emailKey, passwordKey;
   final _formKey = GlobalKey<FormState>();
   late bool isRememberMe = false;
+
+  bool _isLoading = true;
+  String _pageContent = AppStrings.loadingPleaseWait;
+
+  Future<void> _loadData() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted) {
+      setState(() {
+        _pageContent = AppStrings.loadingCompleted;
+        _isLoading = false;
+      });
+    }
+  }
 
   // Function to show the exit confirmation dialog
   Future<bool> _showExitConfirmation(BuildContext context) async {
@@ -48,6 +63,7 @@ class _PageSignInState extends State<PageSignIn> {
 
   @override
   void initState() {
+    _loadData();
     emailController = TextEditingController();
     passwordController = TextEditingController();
     emailKey = GlobalKey<FormState>();
@@ -89,7 +105,9 @@ class _PageSignInState extends State<PageSignIn> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.colorBackground ,
-        body: Center(
+        body: _isLoading?
+            const LoaderWidget():
+        Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

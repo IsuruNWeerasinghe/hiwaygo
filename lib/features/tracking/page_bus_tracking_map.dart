@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
+import 'package:hiwaygo/core/constants/app_strings.dart';
+import 'package:hiwaygo/core/widgets/loader_widget.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,9 +24,24 @@ class _PageBusTrackingMapState extends State<PageBusTrackingMap> {
   Timer? _busUpdateTimer;
   double _rotation = 0; // For compass
 
+  bool _isLoading = true;
+  String _pageContent = AppStrings.loadingPleaseWait;
+
+  Future<void> _loadData() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted) {
+      setState(() {
+        _pageContent = AppStrings.loadingCompleted;
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadData();
     _determinePosition();
     _fetchBusLocationsPeriodically();
   }
@@ -109,8 +126,8 @@ class _PageBusTrackingMapState extends State<PageBusTrackingMap> {
           title: const Text("Hi-Way-Go Tracker"),
           backgroundColor: const Color(0xFF21899C),
         ),
-        body: _currentLocation == null
-            ? const Center(child: CircularProgressIndicator())
+        body: _isLoading ?
+          const LoaderWidget()
             : Stack(
           children: [
             /// ✅ The Map

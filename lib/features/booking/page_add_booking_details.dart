@@ -4,6 +4,7 @@ import 'package:hiwaygo/core/constants/app_colors.dart';
 import 'package:hiwaygo/core/constants/app_strings.dart';
 import 'package:hiwaygo/core/widgets/button_widget.dart';
 import 'package:hiwaygo/core/widgets/date_picker_widget.dart';
+import 'package:hiwaygo/core/widgets/loader_widget.dart';
 import 'package:hiwaygo/core/widgets/search_dropdown_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
 import 'package:hiwaygo/core/widgets/time_picker_widget.dart';
@@ -23,8 +24,23 @@ class _PageAddBookingDetails extends State<PageAddBookingDetails> {
 
   List<String> itemsList = ['Brazil','Argentina','USA','Canada','Germany','France','Japan','Australia','India','China'];
 
+  bool _isLoading = true;
+  String _pageContent = AppStrings.loadingPleaseWait;
+
+  Future<void> _loadData() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted) {
+      setState(() {
+        _pageContent = AppStrings.loadingCompleted;
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   void initState() {
+    _loadData();
     fromController = TextEditingController();
     toController =  TextEditingController();
     dateController = TextEditingController();
@@ -64,7 +80,9 @@ class _PageAddBookingDetails extends State<PageAddBookingDetails> {
             ),
           ),
 
-          body: Center(
+          body: _isLoading?
+              const LoaderWidget():
+          Center(
               child: buildBody(size)
           ),
         )

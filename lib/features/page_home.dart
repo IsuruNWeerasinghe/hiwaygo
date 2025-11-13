@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
 import 'package:hiwaygo/core/constants/app_strings.dart';
-import 'package:hiwaygo/core/widgets/app_name_and_logo_widget.dart';
+import 'package:hiwaygo/core/widgets/loader_widget.dart';
 import 'package:hiwaygo/core/widgets/main_menu_item_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:hiwaygo/features/notifications/notification_service_builder.dart';
 import 'package:hiwaygo/routes.dart';
 
 class PageHome extends StatefulWidget{
@@ -17,14 +18,25 @@ class PageHome extends StatefulWidget{
 
 class _PageHomeState extends State<PageHome> {
   int _currentIndex = 0;
+  bool _isLoading = true;
+  String _pageContent = AppStrings.loadingPleaseWait;
 
-  final _pages = [
-  const Center(child: Text('Home')),
-  const Center(child: Text('Bookings')),
-  const Center(child: Text('Tracking')),
-  const Center(child: Text('Profile')),
-  ];
+  Future<void> _loadData() async {
+    await Future.delayed(const Duration(seconds: 3));
 
+    if (mounted) {
+      setState(() {
+        _pageContent = AppStrings.loadingCompleted;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    _loadData();
+  }
 
   // Function to show the exit confirmation dialog
   Future<bool> _showExitConfirmation(BuildContext context) async {
@@ -124,7 +136,9 @@ class _PageHomeState extends State<PageHome> {
                 NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Profile'),
               ],
             ),
-          body: Center(
+          body: _isLoading?
+          const LoaderWidget()
+          : Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -191,7 +205,14 @@ class _PageHomeState extends State<PageHome> {
                         MainMenuItemWidget(
                             size: size,
                             menuTitle: AppStrings.contactUs,
-                          onTap: (){},
+                          onTap: (){
+                            NotificationService().showSimpleNotification(
+                              id: 1,
+                              title: 'New Message',
+                              body: 'Your booking has been confirmed.',
+                              payload: 'booking_123',
+                            );
+                          },
                         ),
                         MainMenuItemWidget(
                             size: size,

@@ -6,6 +6,7 @@ import 'package:hiwaygo/core/widgets/CustomAlertDialog.dart';
 import 'package:hiwaygo/core/widgets/add_reviews_widget.dart';
 import 'package:hiwaygo/core/widgets/button_widget.dart';
 import 'package:hiwaygo/core/widgets/date_picker_widget.dart';
+import 'package:hiwaygo/core/widgets/loader_widget.dart';
 import 'package:hiwaygo/core/widgets/search_dropdown_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
 import 'package:hiwaygo/core/widgets/time_picker_widget.dart';
@@ -20,10 +21,24 @@ class PageActivityHistory extends StatefulWidget{
 }
 
 class _PageActivityHistory extends State<PageActivityHistory> {
+  bool _isLoading = true;
+  String _pageContent = AppStrings.loadingPleaseWait;
+
+  Future<void> _loadData() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted) {
+      setState(() {
+        _pageContent = AppStrings.loadingCompleted;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
-  void initState() {
+  initState() {
     super.initState();
+    _loadData();
   }
 
   @override
@@ -50,7 +65,9 @@ class _PageActivityHistory extends State<PageActivityHistory> {
             ),
           ),
 
-          body: Center(
+          body: _isLoading?
+          const LoaderWidget()
+          :Center(
               child: buildBody(size)
           ),
         )

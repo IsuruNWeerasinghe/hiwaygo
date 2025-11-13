@@ -3,11 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
 
 enum ReviewRating {
-  terrible,
-  poor,
-  okay,
-  good,
-  excellent,
+  terrible, // Index 0 (1 Star)
+  poor,     // Index 1 (2 Stars)
+  okay,     // Index 2 (3 Stars)
+  good,     // Index 3 (4 Stars)
+  excellent,// Index 4 (5 Stars)
 }
 
 class AddReviewDialog extends StatefulWidget {
@@ -37,20 +37,13 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
   ReviewRating? _busRating;
   final TextEditingController _commentController = TextEditingController();
 
-  final Map<ReviewRating, String> _ratingLabels = {
-    ReviewRating.terrible: "Terrible",
-    ReviewRating.poor: "Poor",
-    ReviewRating.okay: "Okay",
-    ReviewRating.good: "Good",
-    ReviewRating.excellent: "Excellent",
-  };
-
-  final Map<ReviewRating, Color> _ratingColors = {
-    ReviewRating.terrible: Colors.red.shade700,
-    ReviewRating.poor: Colors.orange.shade700,
-    ReviewRating.okay: Colors.yellow.shade800,
-    ReviewRating.good: Colors.lightGreen.shade700,
-    ReviewRating.excellent: Colors.green.shade700,
+  // Color map for the star gradient (optional, but nice UX)
+  final Map<ReviewRating, Color> _starColorMap = const {
+    ReviewRating.terrible: Color(0xFFE53935), // Red (1 Star)
+    ReviewRating.poor: Color(0xFFFF9800),    // Orange (2 Stars)
+    ReviewRating.okay: Color(0xFFFFEB3B),    // Yellow (3 Stars)
+    ReviewRating.good: Color(0xFF8BC34A),    // Light Green (4 Stars)
+    ReviewRating.excellent: Color(0xFF4CAF50), // Green (5 Stars)
   };
 
   @override
@@ -66,49 +59,80 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
         _busRating != null;
   }
 
+  // 💡 MODIFIED: Uses IconButton and Row for 5-star rating
   Widget _buildRatingSection({
     required String title,
     required ReviewRating? currentValue,
     required ValueChanged<ReviewRating?> onChanged,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: GoogleFonts.inter(
-            fontSize: 16.0,
-            fontWeight: FontWeight.w600,
-            color: AppColors.colorBlack,
+    // Current rating index (e.g., Terrible=0, Excellent=4) or -1 if null
+    final int selectedIndex = currentValue?.index ?? -1;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.inter(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+              color: AppColors.colorBlack,
+            ),
           ),
-        ),
-        const SizedBox(height: 8.0),
-        Wrap(
-          spacing: 8.0,
-          runSpacing: 4.0,
-          children: ReviewRating.values.map((rating) {
-            bool isSelected = currentValue == rating;
-            return ChoiceChip(
-              label: Text(_ratingLabels[rating]!),
-              selected: isSelected,
-              selectedColor: _ratingColors[rating],
-              disabledColor: AppColors.colorTealBlue.withOpacity(0.2),
-              labelStyle: GoogleFonts.inter(
-                color: isSelected ? Colors.white : AppColors.colorBlack,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          const SizedBox(height: 8.0),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: List.generate(ReviewRating.values.length, (index) {
+              // The star position (1 to 5)
+              final int starPosition = index + 1;
+
+              // The ReviewRating value corresponding to this star
+              final ReviewRating ratingValue = ReviewRating.values[index];
+
+              // Check if this star should be filled
+              final bool isFilled = starPosition <= (selectedIndex + 1);
+
+              // Get color from the map based on the star's enum value
+              final Color starColor = isFilled
+                  ? _starColorMap[ratingValue]!
+                  : Colors.grey.shade300; // Unfilled color
+
+              return IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 35), // Control icon spacing
+                icon: Icon(
+                  Icons.star,
+                  color: starColor,
+                  size: 32.0,
+                ),
+                onPressed: () {
+                  // If the user taps the currently selected star, deselect (set to null).
+                  // Otherwise, select the rating corresponding to this star's index.
+                  final newRating = (selectedIndex == index) ? null : ratingValue;
+                  onChanged(newRating);
+                },
+              );
+            }),
+          ),
+
+          // Optional: Display the selected rating label below the stars
+          if (currentValue != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0, top: 2.0),
+              child: Text(
+                currentValue.name.toUpperCase(), // Display enum name as text
+                style: GoogleFonts.inter(
+                    color: _starColorMap[currentValue]!,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12.0
+                ),
               ),
-              onSelected: (selected) {
-                onChanged(selected ? rating : null);
-              },
-              side: BorderSide(
-                color: isSelected ? Colors.transparent : AppColors.colorTealBlue,
-                width: 1.0,
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 15.0),
-      ],
+            ),
+        ],
+      ),
     );
   }
 
@@ -133,7 +157,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
             ),
           ],
         ),
-        child: SingleChildScrollView( // Added SingleChildScrollView
+        child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -153,36 +177,28 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
                 title: "Overall satisfaction",
                 currentValue: _overallSatisfaction,
                 onChanged: (rating) {
-                  setState(() {
-                    _overallSatisfaction = rating;
-                  });
+                  setState(() => _overallSatisfaction = rating);
                 },
               ),
               _buildRatingSection(
                 title: "How you feel about the driver?",
                 currentValue: _driverRating,
                 onChanged: (rating) {
-                  setState(() {
-                    _driverRating = rating;
-                  });
+                  setState(() => _driverRating = rating);
                 },
               ),
               _buildRatingSection(
                 title: "How you feel about the conductor?",
                 currentValue: _conductorRating,
                 onChanged: (rating) {
-                  setState(() {
-                    _conductorRating = rating;
-                  });
+                  setState(() => _conductorRating = rating);
                 },
               ),
               _buildRatingSection(
                 title: "How you feel about the bus?",
                 currentValue: _busRating,
                 onChanged: (rating) {
-                  setState(() {
-                    _busRating = rating;
-                  });
+                  setState(() => _busRating = rating);
                 },
               ),
 
@@ -198,7 +214,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
               const SizedBox(height: 8.0),
               TextField(
                 controller: _commentController,
-                maxLines: 3,
+                maxLines: 2,
                 decoration: InputDecoration(
                   hintText: "Share your thoughts...",
                   hintStyle: GoogleFonts.inter(color: AppColors.colorTealBlue),
@@ -237,7 +253,7 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 15.0),
+                  const SizedBox(width: 10.0),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _isFormValid()

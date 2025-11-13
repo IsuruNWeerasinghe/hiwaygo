@@ -5,12 +5,16 @@ import 'package:hiwaygo/features/auth/page_sign_in.dart';
 import 'package:hiwaygo/features/auth/page_sign_up.dart';
 import 'package:hiwaygo/features/booking/page_add_booking_details.dart';
 import 'package:hiwaygo/features/booking/page_booking_details_list.dart';
+import 'package:hiwaygo/features/notifications/notification_service_builder.dart';
 import 'package:hiwaygo/features/page_home.dart';
 import 'package:hiwaygo/features/tracking/page_bus_tracking_map.dart';
 import 'package:hiwaygo/features/tracking/page_select_tracking_details.dart';
 import 'package:hiwaygo/routes.dart';
 
 void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().initializeNotifications();
+
   runApp(GestureDetector(
     onTap: () {
       FocusManager.instance.primaryFocus?.unfocus();
