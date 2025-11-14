@@ -127,6 +127,19 @@ class _PageHomeState extends State<PageHome> {
               selectedIndex: _currentIndex,
               onDestinationSelected: (int index) {
                 setState(() => _currentIndex = index);
+                switch (index) {
+                  case 0:
+                    Navigator.popAndPushNamed(context, Routes.homePage);
+                    break;
+                  case 1:
+                    Navigator.popAndPushNamed(context, Routes.viewBookingsPage);
+                  case 2:
+                    Navigator.popAndPushNamed(context, Routes.viewBookingsPage);
+                    break;
+                  case 3:
+                    Navigator.popAndPushNamed(context, Routes.homePage);
+                    break;
+                }
               },
               destinations: const [
                 NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),

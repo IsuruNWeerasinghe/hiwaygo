@@ -81,5 +81,8 @@ class AppStrings{
   static const String deleteBookingActionYes = "Yes, Delete";
   static const String deleteBookingActionNo = "No, Keep";
 
-
+  ///Bus Booking Details Page related strings
+  static const String bookingDetails = "Booking Details";
+  static const String busName = "Bus Name";
+  static const String busNumber = "Bus Number";
 }
