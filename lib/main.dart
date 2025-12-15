@@ -3,13 +3,15 @@ import 'package:hiwaygo/features/activity_history/page_activity_history.dart';
 import 'package:hiwaygo/features/auth/page_forgot_password.dart';
 import 'package:hiwaygo/features/auth/page_sign_in.dart';
 import 'package:hiwaygo/features/auth/page_sign_up.dart';
-import 'package:hiwaygo/features/booking/page_add_booking_details.dart';
-import 'package:hiwaygo/features/booking/page_booking_details_list.dart';
 import 'package:hiwaygo/features/driver/manage_bookings/page_view_bookings.dart';
 import 'package:hiwaygo/features/notifications/notification_service_builder.dart';
 import 'package:hiwaygo/features/page_home.dart';
-import 'package:hiwaygo/features/tracking/page_bus_tracking_map.dart';
-import 'package:hiwaygo/features/tracking/page_select_tracking_details.dart';
+import 'package:hiwaygo/features/passenger/booking/page_add_booking_details.dart';
+import 'package:hiwaygo/features/passenger/booking/page_booking_details_list.dart';
+import 'package:hiwaygo/features/passenger/tracking/page_bus_tracking_map.dart';
+import 'package:hiwaygo/features/passenger/tracking/page_select_tracking_details.dart';
+import 'package:hiwaygo/features/time_keeper/page_add_edit_bus_schedule.dart';
+import 'package:hiwaygo/features/time_keeper/page_view_bus_schedule.dart';
 import 'package:hiwaygo/routes.dart';
 
 void main() async{
@@ -36,6 +38,8 @@ void main() async{
           Routes.bookingDetailsListPage: (context) => PageBookingDetailsList(),
           Routes.activityHistoryPage: (context) => PageActivityHistory(),
           Routes.viewBookingsPage: (context) => PageViewBookings(),
+          Routes.viewAddEditBusSchedulePage: (context) => PageAddEditBusSchedule(),
+          Routes.viewBusSchedulePage: (context) => PageViewBusSchedule()
         },
       ),
     ),

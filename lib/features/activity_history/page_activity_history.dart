@@ -2,14 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
 import 'package:hiwaygo/core/constants/app_strings.dart';
-import 'package:hiwaygo/core/widgets/custom_alert_dialog.dart';
 import 'package:hiwaygo/core/widgets/add_reviews_widget.dart';
-import 'package:hiwaygo/core/widgets/button_widget.dart';
-import 'package:hiwaygo/core/widgets/date_picker_widget.dart';
 import 'package:hiwaygo/core/widgets/loader_widget.dart';
-import 'package:hiwaygo/core/widgets/search_dropdown_widget.dart';
-import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
-import 'package:hiwaygo/core/widgets/time_picker_widget.dart';
 import 'package:hiwaygo/routes.dart';
 
 class PageActivityHistory extends StatefulWidget{

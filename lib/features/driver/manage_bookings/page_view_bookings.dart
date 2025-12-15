@@ -51,16 +51,7 @@ class _PageViewBookings extends State<PageViewBookings> {
   String _pageContent = AppStrings.loadingPleaseWait;
 
   late List<BookingData> _allBookings;
-  List<BookingData> _filteredBookings = [];
 
-  // Filter State Variables
-  DateTime? _selectedDate;
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
-
-  final GlobalKey<State> _datePickerKey = GlobalKey();
-  final GlobalKey<State> _startTimePickerKey = GlobalKey();
-  final GlobalKey<State> _endTimePickerKey = GlobalKey();
 
   Future<void> _loadData() async {
     await Future.delayed(const Duration(seconds: 3));
@@ -135,108 +126,6 @@ class _PageViewBookings extends State<PageViewBookings> {
     ];
   }
 
-  void _applyFilters() {
-    List<BookingData> results = _allBookings;
-
-    // 3A. Filter by Date
-    if (_selectedDate != null) {
-      results = results.where((booking) {
-        DateTime? bookingDateTime = _extractDateTime(booking.detail2DateTime);
-        if (bookingDateTime == null) return false;
-
-        // Compare only the year, month, and day
-        return bookingDateTime.year == _selectedDate!.year &&
-            bookingDateTime.month == _selectedDate!.month &&
-            bookingDateTime.day == _selectedDate!.day;
-      }).toList();
-    }
-
-    // 3B. Filter by Time Range
-    if (_startTime != null && _endTime != null) {
-      results = results.where((booking) {
-        DateTime? bookingDateTime = _extractDateTime(booking.detail2DateTime);
-        if (bookingDateTime == null) return false;
-
-        TimeOfDay bookingTime = TimeOfDay.fromDateTime(bookingDateTime);
-
-        // Convert TimeOfDay to minutes since midnight for easy comparison
-        int startMinutes = _startTime!.hour * 60 + _startTime!.minute;
-        int endMinutes = _endTime!.hour * 60 + _endTime!.minute;
-        int bookingMinutes = bookingTime.hour * 60 + bookingTime.minute;
-
-        // Handle case where time range wraps around midnight (e.g., 10 PM to 4 AM)
-        if (startMinutes > endMinutes) {
-          // Check if time is after start OR before end
-          return bookingMinutes >= startMinutes || bookingMinutes <= endMinutes;
-        } else {
-          // Check if time is simply between start and end
-          return bookingMinutes >= startMinutes && bookingMinutes <= endMinutes;
-        }
-      }).toList();
-    }
-
-    // Update the UI list
-    setState(() {
-      _filteredBookings = results;
-    });
-  }
-
-  DateTime? _extractDateTime(String detail2DateTime) {
-    try {
-      // Assuming format: 'Date: YYYY-MM-DD HH:MM AM/PM'
-      // Find the date part (e.g., '2023-07-15 11:50 PM')
-      String dateString = detail2DateTime.split(':').sublist(1).join(':').trim();
-
-      // Attempt to parse the complex format: '2025-11-15 11:50 PM'
-      // We must manually format the AM/PM string for DateTime.parse
-      if (dateString.toUpperCase().contains('PM')) {
-        dateString = dateString.replaceAll('PM', '').trim();
-        List<String> parts = dateString.split(' ');
-        if (parts.length == 2) {
-          String timePart = parts[1];
-          List<String> timeComponents = timePart.split(':');
-          int hour = int.parse(timeComponents[0]);
-          if (hour != 12) hour += 12;
-          dateString = '${parts[0]} ${hour}:${timeComponents[1]}';
-        }
-      } else if (dateString.toUpperCase().contains('AM')) {
-        dateString = dateString.replaceAll('AM', '').trim();
-        List<String> parts = dateString.split(' ');
-        if (parts.length == 2) {
-          String timePart = parts[1];
-          List<String> timeComponents = timePart.split(':');
-          int hour = int.parse(timeComponents[0]);
-          if (hour == 12) hour = 0; // Midnight 12 AM is hour 0
-          dateString = '${parts[0]} ${hour}:${timeComponents[1]}';
-        }
-      }
-
-      // Final simplified parsing attempt (may require date_format package for robustness)
-      return DateTime.parse(dateString);
-
-    } catch (e) {
-      debugPrint('Error parsing date string: $e');
-      return null;
-    }
-  }
-
-  void _clearFilters() {
-    setState(() {
-      // Reset all filter state variables to null
-      _selectedDate = null;
-      _startTime = null;
-      _endTime = null;
-
-      // 💡 Reset the keys to force the pickers to rebuild and clear their display
-      _datePickerKey.currentState?.setState(() {}); // Using setState() forces rebuild
-      _startTimePickerKey.currentState?.setState(() {});
-      _endTimePickerKey.currentState?.setState(() {});
-    });
-
-    // Re-run the filter application
-    _applyFilters();
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -282,62 +171,59 @@ class _PageViewBookings extends State<PageViewBookings> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  // Date Picker
-                  Expanded(
-                    child: FilterDatePickerWidget(
-                      key: _datePickerKey,
-                      size: size,
-                      onDateSelected: (date) {
-                        _selectedDate = date;
-                        _applyFilters();
-                      },
-                      initialDate: _selectedDate,
-                      label: "Select Date",
+                  TextButton.icon(
+                    onPressed: (){},
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.colorBlack,
+                      backgroundColor: AppColors.colorFacebookButton,
+                      iconColor: AppColors.colorBlack,
+                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.01)
                     ),
+                    icon: Icon(Icons.date_range),
+                    label: const Text(
+                      "Fiter by Date",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.colorBlack
+                      ),),
                   ),
-                  const SizedBox(width: 8),
-                  // Start Time Picker
-                  Expanded(
-                    child: FilterTimePickerWidget(
-                      key: _startTimePickerKey,
-                      size: size,
-                      onTimeSelected: (time) {
-                        _startTime = time;
-                        _applyFilters();
-                      },
-                      initialTime: _startTime,
-                      label: "Start Time",
+                  TextButton.icon(
+                    onPressed: (){},
+                    style: TextButton.styleFrom(
+                        foregroundColor: AppColors.colorBlack,
+                        backgroundColor: AppColors.colorFacebookButton,
+                        iconColor: AppColors.colorBlack,
+                        padding: EdgeInsets.symmetric(horizontal: size.width * 0.01)
                     ),
+                    icon: Icon(Icons.access_time_rounded),
+                    label: const Text(
+                      "Fiter by Time",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.colorBlack
+                      ),),
                   ),
-                  const SizedBox(width: 8),
-                  // End Time Picker
-                  Expanded(
-                    child: FilterTimePickerWidget(
-                      key: _endTimePickerKey,
-                      size: size,
-                      onTimeSelected: (time) {
-                        _endTime = time;
-                        _applyFilters();
-                      },
-                      initialTime: _endTime,
-                      label: "End Time",
+
+                  TextButton.icon(
+                    onPressed: (){},
+                    style: TextButton.styleFrom(
+                        foregroundColor: AppColors.colorBlack,
+                        backgroundColor: AppColors.colorFacebookButton,
+                        iconColor: AppColors.colorBlack,
+                        padding: EdgeInsets.symmetric(horizontal: size.width * 0.01)
                     ),
+                    icon: Icon(Icons.clear),
+                    label: const Text(
+                      "Clear Filters",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.colorBlack
+                      ),),
                   ),
+
                 ],
-              ),
-              const SizedBox(width: 8),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: _clearFilters,
-                  style: TextButton.styleFrom(
-                    foregroundColor: AppColors.colorTealBlue,
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  child: const Text("Clear Filters"),
-                ),
               ),
             ],
           ),
@@ -354,7 +240,7 @@ class _PageViewBookings extends State<PageViewBookings> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min, // Essential: Column inside SCV must be min size
               children: [
-                if (_filteredBookings.isEmpty)
+                if (_allBookings.isEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 50.0),
                     child: Text(
@@ -364,7 +250,7 @@ class _PageViewBookings extends State<PageViewBookings> {
                   ),
 
                 // Map list here
-                ..._filteredBookings.map((booking) {
+                ..._allBookings.map((booking) {
                   return Padding(
                     padding: EdgeInsets.only(bottom: size.height * 0.02),
                     child: BookingDetailsWidget(

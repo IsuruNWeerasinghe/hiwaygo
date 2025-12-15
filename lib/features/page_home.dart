@@ -134,7 +134,7 @@ class _PageHomeState extends State<PageHome> {
                   case 1:
                     Navigator.popAndPushNamed(context, Routes.viewBookingsPage);
                   case 2:
-                    Navigator.popAndPushNamed(context, Routes.viewBookingsPage);
+                    Navigator.popAndPushNamed(context, Routes.viewAddEditBusSchedulePage);
                     break;
                   case 3:
                     Navigator.popAndPushNamed(context, Routes.homePage);

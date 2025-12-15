@@ -4,6 +4,7 @@ class AppStrings{
   static const String space = " ";
   static const String loadingPleaseWait = "Loading...";
   static const String loadingCompleted = "Loading Completed";
+  static const String save = "Save";
 
   /// App Name
   static const String appNameHi = "Hi";
@@ -85,4 +86,19 @@ class AppStrings{
   static const String bookingDetails = "Booking Details";
   static const String busName = "Bus Name";
   static const String busNumber = "Bus Number";
+
+///Bus Route Page related strings
+  static const String busRoute = "Bus Schedule";
+  static const String busRouteDetails = "Bus Schedule Details";
+  static const String busScheduleDetailsAddEdit = "Add Edit Schedule Details";
+  static const String busRouteName = "Bus Route Name";
+  static const String busRouteNumber = "Bus Route Number";
+  static const String busRouteDescription = "Bus Route Description";
+  static const String addNewBusSchedule = "Add New Bus Schedule";
+  static const String busScheduleHistory = "Bus Schedule History";
+  static const String deleteBusSchedule = "Delete Bus Schedule?";
+  static const String deleteBusScheduleConfirmation = "Are you sure you want to delete this bus Schedule? This action cannot be undone.";
+  static const String deleteBusScheduleActionYes = "Yes, Delete";
+  static const String deleteBusScheduleActionNo = "No, Keep";
+
 }

@@ -124,7 +124,7 @@ class _PageAddBookingDetails extends State<PageAddBookingDetails> {
             SizedBox(height: size.height * textFieldSpacing),
             TimePickerWidget(size: size, textEditingController: timeController, hintText: AppStrings.time, formKey: _formKey, textIcon: Icons.access_time_rounded,),
             SizedBox(height: size.height * textFieldSpacing),
-            TextFieldCommonWidget(size: size, textEditingController: seatCountController, inputValueType: AppStrings.seatCount, formKey: _formKey),
+            TextFieldCommonWidget(size: size, textEditingController: seatCountController, formKey: _formKey, textInputType: TextInputType.number, textIcon: Icons.event_seat, hintText: AppStrings.seatCount),
             SizedBox(height: size.height * buttonFieldSpacing),
             ButtonWidget(
               size: size,

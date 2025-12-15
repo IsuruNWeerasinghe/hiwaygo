@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
 import 'package:hiwaygo/core/constants/app_strings.dart';
 import 'package:hiwaygo/core/widgets/app_name_and_logo_widget.dart';
 import 'package:hiwaygo/core/widgets/button_widget.dart';
 import 'package:hiwaygo/core/widgets/loader_widget.dart';
-import 'package:hiwaygo/core/widgets/text_field_password_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
 import 'package:hiwaygo/routes.dart';
 
@@ -96,7 +93,7 @@ class _PageSignInState extends State<PageForgotPassword> {
             AppNameAndLogoWidget(size: size, pageName: AppStrings.forgotPassword),
             SizedBox(height: size.height * textFieldSpacing,),
             //email , password textField and rememberForget text here
-            TextFieldCommonWidget(size: size, textEditingController: emailController, inputValueType: AppStrings.email, formKey: _formKey),
+            TextFieldCommonWidget(size: size, textEditingController: emailController, formKey: _formKey, textInputType: TextInputType.emailAddress, textIcon: Icons.email, hintText: AppStrings.email),
             SizedBox(height: size.height * textFieldSpacing),
             ButtonWidget(
               size: size,

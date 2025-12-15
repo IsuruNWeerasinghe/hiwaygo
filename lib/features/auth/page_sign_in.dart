@@ -148,7 +148,7 @@ class _PageSignInState extends State<PageSignIn> {
             //logo & login text here
             AppNameAndLogoWidget(size: size, pageName: AppStrings.signIn),
             SizedBox(height: size.height * textFieldSpacing),
-            TextFieldCommonWidget(size: size, textEditingController: emailController, inputValueType: AppStrings.email, formKey: emailKey),
+            TextFieldCommonWidget(size: size, textEditingController: emailController, formKey: emailKey, textInputType: TextInputType.emailAddress, textIcon: Icons.email, hintText: AppStrings.email),
             SizedBox(height: size.height * textFieldSpacing),
             CommonPasswordField(size: size, textEditingController: passwordController, inputValueType: AppStrings.password, formKey: passwordKey),
             SizedBox(height: size.height * textFieldSpacing),

@@ -7,15 +7,20 @@ import 'package:hiwaygo/core/utils/custom_validation_util.dart';
 class TextFieldCommonWidget extends StatefulWidget{
   final Size size;
   final TextEditingController textEditingController;
-  final String inputValueType;
   final GlobalKey formKey;
+  final TextInputType textInputType;
+  final IconData textIcon;
+  final String hintText;
+
 
   const TextFieldCommonWidget({
     super.key,
     required this.size,
     required this.textEditingController,
-    required this.inputValueType,
-    required this.formKey
+    required this.formKey,
+    required this.textInputType,
+    required this.textIcon,
+    required this.hintText
   });
 
   @override
@@ -28,25 +33,6 @@ class TextFieldCommonWidget extends StatefulWidget{
 class _TextFieldCommonWidget extends State<TextFieldCommonWidget> {
   @override
   Widget build(BuildContext context) {
-    TextInputType textInputType = TextInputType.none;
-    IconData textIcon = Icons.person;
-    if(widget.inputValueType == AppStrings.firstName || widget.inputValueType == AppStrings.lastName){
-      textInputType = TextInputType.name;
-      textIcon = Icons.person;
-    } else if(widget.inputValueType == AppStrings.email){
-      textInputType = TextInputType.emailAddress;
-      textIcon = Icons.mail;
-    }else if(widget.inputValueType == AppStrings.nic){
-      textInputType = TextInputType.text;
-      textIcon = Icons.person;
-    }else if(widget.inputValueType == AppStrings.phone){
-      textInputType = TextInputType.phone;
-      textIcon = Icons.phone;
-    }else if(widget.inputValueType == AppStrings.seatCount){
-      textInputType = TextInputType.number;
-      textIcon = Icons.people;
-    }
-
     return SizedBox(
       height: widget.size.height / 13,
       child: Container(
@@ -67,10 +53,10 @@ class _TextFieldCommonWidget extends State<TextFieldCommonWidget> {
                 color: const Color(0xFF151624),
               ),
               maxLines: 1,
-              keyboardType: textInputType,
+              keyboardType: widget.textInputType,
               cursorColor: const Color(0xFF151624),
               decoration: InputDecoration(
-                hintText: AppStrings.enterYour + widget.inputValueType,
+                hintText: widget.hintText,
                 hintStyle: GoogleFonts.inter(
                   fontSize: 16.0,
                   color: const Color(0xFF151624).withOpacity(0.5),
@@ -92,7 +78,7 @@ class _TextFieldCommonWidget extends State<TextFieldCommonWidget> {
                       color: AppColors.colorCyanPulse,
                     )),
                 prefixIcon: Icon(
-                  textIcon,
+                  widget.textIcon,
                   color: widget.textEditingController.text.isEmpty
                       ? const Color(0xFF151624).withOpacity(0.5)
                       : AppColors.colorCyanPulse,
@@ -117,16 +103,16 @@ class _TextFieldCommonWidget extends State<TextFieldCommonWidget> {
               ),
               validator: (value){
                   if (value == null || value.isEmpty) {
-              return widget.inputValueType + AppStrings.cannotEmpty; // Error message
+              return widget.hintText + AppStrings.cannotEmpty; // Error message
             }
-            if(widget.inputValueType == AppStrings.nic && !CustomValidationUtil.validateNic(value)){
-              return widget.inputValueType + AppStrings.formatInvalid;
+            if(widget.hintText.contains(AppStrings.nic) && !CustomValidationUtil.validateNic(value)){
+              return AppStrings.nic + AppStrings.formatInvalid;
             }
-            if(widget.inputValueType == AppStrings.phone && !CustomValidationUtil.validatePhoneNo(value)){
-              return widget.inputValueType + AppStrings.formatInvalid;
+            if(widget.hintText.contains(AppStrings.phone) && !CustomValidationUtil.validatePhoneNo(value)){
+              return AppStrings.phone + AppStrings.formatInvalid;
             }
-            if(widget.inputValueType == AppStrings.email && !CustomValidationUtil.validateEmail(value)){
-              return widget.inputValueType + AppStrings.formatInvalid;
+            if(widget.hintText.contains(AppStrings.email) && !CustomValidationUtil.validateEmail(value)){
+              return AppStrings.email + AppStrings.formatInvalid;
             }
             return null;
           },
