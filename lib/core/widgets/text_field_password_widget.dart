@@ -43,7 +43,7 @@ class CommonPasswordField extends StatelessWidget{
           obscureText: true,
           cursorColor: const Color(0xFF151624),
           decoration: InputDecoration(
-            hintText: 'Enter your $inputValueType',
+            hintText: '$inputValueType',
             hintStyle: GoogleFonts.inter(
               fontSize: 16.0,
               color: const Color(0xFF151624).withOpacity(0.5),

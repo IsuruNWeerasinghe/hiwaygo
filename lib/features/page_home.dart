@@ -143,10 +143,10 @@ class _PageHomeState extends State<PageHome> {
               },
               destinations: const [
                 NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
-                NavigationDestination(icon: Icon(Icons.history), selectedIcon: Icon(Icons.confirmation_number), label: 'Bookings'),
-                NavigationDestination(icon: Icon(Icons.directions_bus_outlined), selectedIcon: Icon(Icons.directions_bus), label: 'Tracking'),
-                NavigationDestination(icon: Icon(Icons.manage_accounts), selectedIcon: Icon(Icons.directions_bus), label: 'Tracking'),
-                NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'Profile'),
+                NavigationDestination(icon: Icon(Icons.history), selectedIcon: Icon(Icons.history_outlined), label: 'Bookings'),
+                NavigationDestination(icon: Icon(Icons.directions_bus), selectedIcon: Icon(Icons.directions_bus_outlined), label: 'Tracking'),
+                NavigationDestination(icon: Icon(Icons.manage_accounts), selectedIcon: Icon(Icons.manage_accounts_outlined), label: 'Tracking'),
+                NavigationDestination(icon: Icon(Icons.person), selectedIcon: Icon(Icons.person_outline), label: 'Profile'),
               ],
             ),
           body: _isLoading?
