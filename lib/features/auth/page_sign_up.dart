@@ -8,6 +8,7 @@ import 'package:hiwaygo/core/widgets/button_widget.dart';
 import 'package:hiwaygo/core/widgets/loader_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_password_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
+import 'package:hiwaygo/features/auth/data/auth_service.dart';
 import 'package:hiwaygo/routes.dart';
 
 class PageSignUp extends StatefulWidget {
@@ -19,8 +20,13 @@ class PageSignUp extends StatefulWidget {
 }
 
 class _PageSignInState extends State<PageSignUp> {
-  late TextEditingController firstNameController, lastNameController, nicController, phoneNoController,
-      emailController, rePasswordController, passwordController;
+  late TextEditingController firstNameController,
+      lastNameController,
+      nicController,
+      phoneNoController,
+      emailController,
+      rePasswordController,
+      passwordController;
   final _formKey = GlobalKey<FormState>();
   final firstNameKey = GlobalKey<FormState>();
   final lastNameKey = GlobalKey<FormState>();
@@ -63,23 +69,23 @@ class _PageSignInState extends State<PageSignUp> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.colorBackground,
-      body: _isLoading?
-          const LoaderWidget():
-      SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              SizedBox(height: size.height * 0.02),
-              buildBody(size),
-              footerWidget(size)
-            ],
-          ),
-        ),
-      ),
+      body: _isLoading
+          ? const LoaderWidget()
+          : SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(height: size.height * 0.02),
+                    buildBody(size),
+                    footerWidget(size),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
@@ -97,7 +103,7 @@ class _PageSignInState extends State<PageSignUp> {
             color: AppColors.colorTealBlue.withOpacity(0.2),
             spreadRadius: 1,
             blurRadius: 3,
-            offset: const Offset(0, 3)
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -110,28 +116,110 @@ class _PageSignInState extends State<PageSignUp> {
           children: [
             //logo & login text here
             AppNameAndLogoWidget(size: size, pageName: AppStrings.signUp),
-            SizedBox(height: size.height * textFieldSpacing,),
+            SizedBox(height: size.height * textFieldSpacing),
             //email , password textField and rememberForget text here
-            TextFieldCommonWidget(size: size, textEditingController: firstNameController, formKey: firstNameKey, textInputType: TextInputType.text, textIcon: Icons.person, hintText: AppStrings.firstName),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: firstNameController,
+              formKey: firstNameKey,
+              textInputType: TextInputType.text,
+              textIcon: Icons.person,
+              hintText: AppStrings.firstName,
+            ),
             SizedBox(height: size.height * textFieldSpacing),
-            TextFieldCommonWidget(size: size, textEditingController: lastNameController, formKey: lastNameKey, textInputType: TextInputType.text, textIcon: Icons.person, hintText: AppStrings.firstName),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: lastNameController,
+              formKey: lastNameKey,
+              textInputType: TextInputType.text,
+              textIcon: Icons.person,
+              hintText: AppStrings.firstName,
+            ),
             SizedBox(height: size.height * textFieldSpacing),
-            TextFieldCommonWidget(size: size, textEditingController: nicController, formKey: nicKey, textInputType: TextInputType.text, textIcon: Icons.perm_identity, hintText: AppStrings.nic),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: nicController,
+              formKey: nicKey,
+              textInputType: TextInputType.text,
+              textIcon: Icons.perm_identity,
+              hintText: AppStrings.nic,
+            ),
             SizedBox(height: size.height * textFieldSpacing),
-            TextFieldCommonWidget(size: size, textEditingController: phoneNoController, formKey: phoneNoKey, textInputType: TextInputType.phone, textIcon: Icons.phone_android, hintText: AppStrings.phone),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: phoneNoController,
+              formKey: phoneNoKey,
+              textInputType: TextInputType.phone,
+              textIcon: Icons.phone_android,
+              hintText: AppStrings.phone,
+            ),
             SizedBox(height: size.height * textFieldSpacing),
-            TextFieldCommonWidget(size: size, textEditingController: emailController, formKey: _formKey, textInputType: TextInputType.emailAddress, textIcon: Icons.email, hintText: AppStrings.email),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: emailController,
+              formKey: _formKey,
+              textInputType: TextInputType.emailAddress,
+              textIcon: Icons.email,
+              hintText: AppStrings.email,
+            ),
             SizedBox(height: size.height * textFieldSpacing),
-            CommonPasswordField(size: size, textEditingController: passwordController, inputValueType: AppStrings.password, formKey: _formKey),
+            CommonPasswordField(
+              size: size,
+              textEditingController: passwordController,
+              inputValueType: AppStrings.password,
+              formKey: _formKey,
+            ),
             SizedBox(height: size.height * textFieldSpacing),
-            CommonPasswordField(size: size, textEditingController: rePasswordController, inputValueType: AppStrings.rePassword, formKey: _formKey),
-            SizedBox(height: size.height * textFieldSpacing,),
+            CommonPasswordField(
+              size: size,
+              textEditingController: rePasswordController,
+              inputValueType: AppStrings.rePassword,
+              formKey: _formKey,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
             ButtonWidget(
               size: size,
               buttonText: AppStrings.signUp,
-              onTap: (){
+              onTap: () async {
                 // 4. Trigger validation by checking the current state of the form.
                 if (_formKey.currentState!.validate()) {
+                  // 3. Collect data from your controllers into a Map
+                  // These keys must match the property names in your .NET 'BusDetail' class
+                  final Map<String, dynamic> busData = {
+                    "nic": nicController.text,
+                    "firstName": firstNameController.text,
+                    "lastName": lastNameController.text,
+                    "email": emailController.text,
+                    "password": passwordController.text,
+                    "phoneNumber":
+                        int.tryParse(phoneNoController.text) ??
+                        0, // Convert String to Int
+                    "userRoleId":
+                        "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Replace with actual Role ID
+                    "isOwner": true,
+                    "isActive": true,
+                  };
+                  // 4. Call the service and wait for the result
+                  final bool isSuccess = await AuthService().createBusDetail(
+                    busData,
+                  );
+
+                  if (isSuccess) {
+                    // Success: Clear fields or navigate away
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Registration Successful!')),
+                    );
+                    Navigator.pop(context); // Go back to login
+                  } else {
+                    // Failure: Show error message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Registration failed. Check your connection.',
+                        ),
+                      ),
+                    );
+                  }
                   // If the form is valid, display a snackbar or proceed with submission.
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Processing Data')),
@@ -144,7 +232,7 @@ class _PageSignInState extends State<PageSignUp> {
                 }
               },
             ),
-            SizedBox(height: size.height * textFieldSpacing)
+            SizedBox(height: size.height * textFieldSpacing),
           ],
         ),
       ),
@@ -160,21 +248,19 @@ class _PageSignInState extends State<PageSignUp> {
         children: <Widget>[
           Text(
             AppStrings.backTo,
-            style: TextStyle(
-              fontWeight: FontWeight.w400,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w400),
           ),
           TextButton(
-              child: Text(
-                AppStrings.signIn,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.colorTealBlue,
-                ),
+            child: Text(
+              AppStrings.signIn,
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                color: AppColors.colorTealBlue,
               ),
-              onPressed: (){
-                Navigator.popAndPushNamed(context, Routes.signInPage);
-              }
+            ),
+            onPressed: () {
+              Navigator.popAndPushNamed(context, Routes.signInPage);
+            },
           ),
         ],
       ),
