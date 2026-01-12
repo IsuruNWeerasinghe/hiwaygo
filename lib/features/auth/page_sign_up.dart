@@ -9,6 +9,7 @@ import 'package:hiwaygo/core/widgets/loader_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_password_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
 import 'package:hiwaygo/features/auth/data/auth_service.dart';
+import 'package:hiwaygo/features/auth/data/UserRole.dart';
 import 'package:hiwaygo/routes.dart';
 
 class PageSignUp extends StatefulWidget {
@@ -38,8 +39,16 @@ class _PageSignInState extends State<PageSignUp> {
 
   bool _isLoading = true;
   String _pageContent = AppStrings.loadingPleaseWait;
+  List<UserRole> _userRoles = [];
+  String? _selectedUserRoleId;
 
   Future<void> _loadData() async {
+    try {
+      _userRoles = await AuthService().getUserRoles();
+    } catch (e) {
+      print("Error loading roles: $e");
+    }
+
     await Future.delayed(const Duration(seconds: 3));
 
     if (mounted) {
@@ -177,12 +186,40 @@ class _PageSignInState extends State<PageSignUp> {
               formKey: _formKey,
             ),
             SizedBox(height: size.height * textFieldSpacing),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                labelText: 'User Type',
+                prefixIcon: const Icon(Icons.category),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              value: _selectedUserRoleId,
+              items: _userRoles.map((role) {
+                return DropdownMenuItem<String>(
+                  value: role.id,
+                  child: Text(role.roleName),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedUserRoleId = value;
+                });
+              },
+              validator: (value) => value == null ? 'Please select a user type' : null,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
             ButtonWidget(
               size: size,
               buttonText: AppStrings.signUp,
               onTap: () async {
+                
                 // 4. Trigger validation by checking the current state of the form.
                 if (_formKey.currentState!.validate()) {
+                  setState(() {
+                    _isLoading = true;
+                  });
                   // 3. Collect data from your controllers into a Map
                   // These keys must match the property names in your .NET 'BusDetail' class
                   final Map<String, dynamic> busData = {
@@ -194,8 +231,7 @@ class _PageSignInState extends State<PageSignUp> {
                     "phoneNumber":
                         int.tryParse(phoneNoController.text) ??
                         0, // Convert String to Int
-                    "userRoleId":
-                        "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Replace with actual Role ID
+                    "userRoleId": _selectedUserRoleId,
                     "isOwner": true,
                     "isActive": true,
                   };
@@ -204,12 +240,18 @@ class _PageSignInState extends State<PageSignUp> {
                     busData,
                   );
 
+                  if (!mounted) return;
+
+                  setState(() {
+                    _isLoading = false;
+                  });
+
                   if (isSuccess) {
                     // Success: Clear fields or navigate away
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Registration Successful!')),
                     );
-                    Navigator.pop(context); // Go back to login
+                    Navigator.pushReplacementNamed(context, Routes.signInPage);
                   } else {
                     // Failure: Show error message
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -220,10 +262,6 @@ class _PageSignInState extends State<PageSignUp> {
                       ),
                     );
                   }
-                  // If the form is valid, display a snackbar or proceed with submission.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
                   // Logic to save data, call an API, etc.
                 } else {
                   // If the form is invalid, the error messages defined in the validator

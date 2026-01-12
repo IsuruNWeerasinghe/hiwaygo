@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'UserRole.dart';
 
 class AuthService {
   // Use 10.0.2.2 for Android Emulator, or your Local IP for physical devices
@@ -20,6 +21,24 @@ class AuthService {
       print("Connection Error: $e");
       print("Response: ${e.toString()}");
       return false;
+    }
+  }
+
+  Future<List<UserRole>> getUserRoles() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:5117/api/UserRole'),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((json) => UserRole.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      print("Error fetching roles: $e");
+      return [];
     }
   }
 }
