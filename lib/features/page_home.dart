@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hiwaygo/core/constants/app_colors.dart';
@@ -5,8 +6,11 @@ import 'package:hiwaygo/core/constants/app_strings.dart';
 import 'package:hiwaygo/core/widgets/loader_widget.dart';
 import 'package:hiwaygo/core/widgets/main_menu_item_widget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:hiwaygo/features/auth/data/UserRole.dart';
+import 'package:hiwaygo/features/auth/data/auth_service.dart';
 import 'package:hiwaygo/features/notifications/notification_service_builder.dart';
 import 'package:hiwaygo/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageHome extends StatefulWidget{
   static const String routeName = '/page_home';
@@ -20,8 +24,29 @@ class _PageHomeState extends State<PageHome> {
   int _currentIndex = 0;
   bool _isLoading = true;
   String _pageContent = AppStrings.loadingPleaseWait;
+  bool _isPassenger = false;
 
   Future<void> _loadData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('jwt_token');
+
+      if (token != null) {
+        final payload = _parseJwt(token);
+        // Extract UserRole ID from JWT (key is "UserRole" as per instructions)
+        final String? userRoleId = payload['UserRole'];
+
+        if (userRoleId != null) {
+          final UserRole? role = await AuthService().getUserRoleById(userRoleId);
+          if (role != null && role.roleName == "Passenger") {
+            _isPassenger = true;
+          }
+        }
+      }
+    } catch (e) {
+      print("Error loading user role: $e");
+    }
+
     await Future.delayed(const Duration(seconds: 3));
 
     if (mounted) {
@@ -30,6 +55,32 @@ class _PageHomeState extends State<PageHome> {
         _isLoading = false;
       });
     }
+  }
+
+  Map<String, dynamic> _parseJwt(String token) {
+    final parts = token.split('.');
+    if (parts.length != 3) {
+      throw Exception('invalid token');
+    }
+
+    final payload = _decodeBase64(parts[1]);
+    final payloadMap = json.decode(payload);
+    if (payloadMap is! Map<String, dynamic>) {
+      throw Exception('invalid payload');
+    }
+
+    return payloadMap;
+  }
+
+  String _decodeBase64(String str) {
+    String output = str.replaceAll('-', '+').replaceAll('_', '/');
+    switch (output.length % 4) {
+      case 0: break;
+      case 2: output += '=='; break;
+      case 3: output += '='; break;
+      default: throw Exception('Illegal base64url string!"');
+    }
+    return utf8.decode(base64Url.decode(output));
   }
 
   @override
@@ -205,11 +256,12 @@ class _PageHomeState extends State<PageHome> {
                             menuTitle: AppStrings.liveBusTracing,
                           onTap: (){Navigator.popAndPushNamed(context, Routes.selectBusTrackingDetailsPage);},
                         ),
-                        MainMenuItemWidget(
+                        if (!_isPassenger)
+                          MainMenuItemWidget(
                             size: size,
                             menuTitle: AppStrings.busSchedule,
-                          onTap: (){},
-                        ),
+                            onTap: (){},
+                          ),
                         MainMenuItemWidget(
                             size: size,
                             menuTitle: AppStrings.activityHistory,

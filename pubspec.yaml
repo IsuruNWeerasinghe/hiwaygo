@@ -45,6 +45,8 @@ dependencies:
   dropdown_button2: ^2.3.9
   flutter_local_notifications: ^19.5.0
   url_launcher: ^6.3.2
+  http: ^1.2.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

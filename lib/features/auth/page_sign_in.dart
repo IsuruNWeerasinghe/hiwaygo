@@ -11,6 +11,8 @@ import 'package:hiwaygo/core/widgets/text_field_password_widget.dart';
 import 'package:hiwaygo/core/widgets/social_media_button_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
 import 'package:hiwaygo/routes.dart';
+import 'package:hiwaygo/features/auth/data/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageSignIn extends StatefulWidget {
   static const String routeName = '/page_sign_in';
@@ -78,6 +80,45 @@ class _PageSignInState extends State<PageSignIn> {
     passwordController.dispose();
     emailKey.currentState?.dispose();
     passwordKey.currentState?.dispose();
+  }
+
+  Future<void> _handleSignIn() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final token = await AuthService().login(emailController.text, passwordController.text);
+
+        if (token != null) {
+          final SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('jwt_token', token);
+
+          if (mounted) {
+            Navigator.popAndPushNamed(context, Routes.homePage);
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Login Failed')),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -157,16 +198,7 @@ class _PageSignInState extends State<PageSignIn> {
             ButtonWidget(
               size: size,
               buttonText: AppStrings.signIn,
-              onTap: (){
-                if (_formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
-                } else {
-                  Navigator.popAndPushNamed(context, Routes.homePage);
-                  print('Form is invalid.');
-                }
-              },
+              onTap: _handleSignIn,
             ),
             SizedBox(height: size.height * textFieldSpacing),
             buildNoAccountText(),
