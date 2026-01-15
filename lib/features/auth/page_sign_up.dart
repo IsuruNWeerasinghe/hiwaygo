@@ -1,0 +1,307 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hiwaygo/core/constants/app_colors.dart';
+import 'package:hiwaygo/core/constants/app_strings.dart';
+import 'package:hiwaygo/core/widgets/app_name_and_logo_widget.dart';
+import 'package:hiwaygo/core/widgets/button_widget.dart';
+import 'package:hiwaygo/core/widgets/loader_widget.dart';
+import 'package:hiwaygo/core/widgets/text_field_password_widget.dart';
+import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
+import 'package:hiwaygo/features/auth/data/auth_service.dart';
+import 'package:hiwaygo/features/auth/data/UserRole.dart';
+import 'package:hiwaygo/routes.dart';
+
+class PageSignUp extends StatefulWidget {
+  static const String routeName = '/page_sign_up';
+  const PageSignUp({super.key});
+
+  @override
+  State<PageSignUp> createState() => _PageSignInState();
+}
+
+class _PageSignInState extends State<PageSignUp> {
+  late TextEditingController firstNameController,
+      lastNameController,
+      nicController,
+      phoneNoController,
+      emailController,
+      rePasswordController,
+      passwordController;
+  final _formKey = GlobalKey<FormState>();
+  final firstNameKey = GlobalKey<FormState>();
+  final lastNameKey = GlobalKey<FormState>();
+  final nicKey = GlobalKey<FormState>();
+  final phoneNoKey = GlobalKey<FormState>();
+  final emailKey = GlobalKey<FormState>();
+  final passwordKey = GlobalKey<FormState>();
+  final rePasswordKey = GlobalKey<FormState>();
+
+  bool _isLoading = true;
+  String _pageContent = AppStrings.loadingPleaseWait;
+  List<UserRole> _userRoles = [];
+  String? _selectedUserRoleId;
+
+  Future<void> _loadData() async {
+    try {
+      _userRoles = await AuthService().getUserRoles();
+    } catch (e) {
+      print("Error loading roles: $e");
+    }
+
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (mounted) {
+      setState(() {
+        _pageContent = AppStrings.loadingCompleted;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    nicController = TextEditingController();
+    phoneNoController = TextEditingController();
+    emailController = TextEditingController();
+    rePasswordController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: AppColors.colorBackground,
+      body: _isLoading
+          ? const LoaderWidget()
+          : SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(height: size.height * 0.02),
+                    buildBody(size),
+                    footerWidget(size),
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
+
+  Widget buildBody(Size size) {
+    double textFieldSpacing = 0.01;
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      width: size.width * 0.9,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.0),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.colorTealBlue.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //logo & login text here
+            AppNameAndLogoWidget(size: size, pageName: AppStrings.signUp),
+            SizedBox(height: size.height * textFieldSpacing),
+            //email , password textField and rememberForget text here
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: firstNameController,
+              formKey: firstNameKey,
+              textInputType: TextInputType.text,
+              textIcon: Icons.person,
+              hintText: AppStrings.firstName,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: lastNameController,
+              formKey: lastNameKey,
+              textInputType: TextInputType.text,
+              textIcon: Icons.person,
+              hintText: AppStrings.firstName,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: nicController,
+              formKey: nicKey,
+              textInputType: TextInputType.text,
+              textIcon: Icons.perm_identity,
+              hintText: AppStrings.nic,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: phoneNoController,
+              formKey: phoneNoKey,
+              textInputType: TextInputType.phone,
+              textIcon: Icons.phone_android,
+              hintText: AppStrings.phone,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+            TextFieldCommonWidget(
+              size: size,
+              textEditingController: emailController,
+              formKey: _formKey,
+              textInputType: TextInputType.emailAddress,
+              textIcon: Icons.email,
+              hintText: AppStrings.email,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+            CommonPasswordField(
+              size: size,
+              textEditingController: passwordController,
+              inputValueType: AppStrings.password,
+              formKey: _formKey,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+            CommonPasswordField(
+              size: size,
+              textEditingController: rePasswordController,
+              inputValueType: AppStrings.rePassword,
+              formKey: _formKey,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                labelText: 'User Type',
+                prefixIcon: const Icon(Icons.category),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              value: _selectedUserRoleId,
+              items: _userRoles.map((role) {
+                return DropdownMenuItem<String>(
+                  value: role.id,
+                  child: Text(role.roleName),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedUserRoleId = value;
+                });
+              },
+              validator: (value) => value == null ? 'Please select a user type' : null,
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+            ButtonWidget(
+              size: size,
+              buttonText: AppStrings.signUp,
+              onTap: () async {
+                
+                // 4. Trigger validation by checking the current state of the form.
+                if (_formKey.currentState!.validate()) {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  // 3. Collect data from your controllers into a Map
+                  // These keys must match the property names in your .NET 'BusDetail' class
+                  final Map<String, dynamic> busData = {
+                    "nic": nicController.text,
+                    "firstName": firstNameController.text,
+                    "lastName": lastNameController.text,
+                    "email": emailController.text,
+                    "password": passwordController.text,
+                    "phoneNumber":
+                        int.tryParse(phoneNoController.text) ??
+                        0, // Convert String to Int
+                    "userRoleId": _selectedUserRoleId,
+                    "isOwner": true,
+                    "isActive": true,
+                  };
+                  // 4. Call the service and wait for the result
+                  final bool isSuccess = await AuthService().createBusDetail(
+                    busData,
+                  );
+
+                  if (!mounted) return;
+
+                  setState(() {
+                    _isLoading = false;
+                  });
+
+                  if (isSuccess) {
+                    // Success: Clear fields or navigate away
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Registration Successful!')),
+                    );
+                    Navigator.pushReplacementNamed(context, Routes.signInPage);
+                  } else {
+                    // Failure: Show error message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Registration failed. Check your connection.',
+                        ),
+                      ),
+                    );
+                  }
+                  // Logic to save data, call an API, etc.
+                } else {
+                  // If the form is invalid, the error messages defined in the validator
+                  // functions will automatically appear below the TextFormFields.
+                  print('Form is invalid.');
+                }
+              },
+            ),
+            SizedBox(height: size.height * textFieldSpacing),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget footerWidget(Size size) {
+    return Padding(
+      padding: EdgeInsets.only(top: size.height * 0.03),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            AppStrings.backTo,
+            style: TextStyle(fontWeight: FontWeight.w400),
+          ),
+          TextButton(
+            child: Text(
+              AppStrings.signIn,
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                color: AppColors.colorTealBlue,
+              ),
+            ),
+            onPressed: () {
+              Navigator.popAndPushNamed(context, Routes.signInPage);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
