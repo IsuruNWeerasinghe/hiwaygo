@@ -1,16 +1,15 @@
 import 'dart:convert';
+import 'package:hiwaygo/core/constants/app_assets.dart';
 import 'package:http/http.dart' as http;
 import 'UserRole.dart';
 
 class AuthService {
-  // Use 10.0.2.2 for Android Emulator, or your Local IP for physical devices
-  final String baseUrl = "http://10.0.2.2:5117/api/User";
 
   Future<bool> createBusDetail(Map<String, dynamic> data) async {
     print("13456789100");
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/Create'),
+        Uri.parse('${AppAssets.baseUrl}/User/Create'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(data),
       );
@@ -27,7 +26,7 @@ class AuthService {
   Future<List<UserRole>> getUserRoles() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/UserRole'),
+        Uri.parse('${AppAssets.baseUrl}/User/UserRole'),
         headers: {"Content-Type": "application/json"},
       );
 
@@ -43,9 +42,10 @@ class AuthService {
   }
 
   Future<String?> login(String email, String password) async {
+    print("${AppAssets.baseUrl}");
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/login'),
+        Uri.parse('${AppAssets.baseUrl}/User/login'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode({'email': email, 'password': password}),
       );
@@ -63,7 +63,7 @@ class AuthService {
   Future<UserRole?> getUserRoleById(String id) async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:5117/api/UserRole/$id'),
+        Uri.parse('${AppAssets.baseUrl}/User/UserRole/$id'),
         headers: {"Content-Type": "application/json"},
       );
 
