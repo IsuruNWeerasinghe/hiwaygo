@@ -10,6 +10,8 @@ import 'package:hiwaygo/core/widgets/search_dropdown_widget.dart';
 import 'package:hiwaygo/core/widgets/text_field_common_widget.dart';
 import 'package:hiwaygo/core/widgets/time_picker_widget.dart';
 import 'package:hiwaygo/routes.dart';
+import 'data/booking_service.dart';
+import 'data/booking_model.dart';
 
 class PageBookingDetailsList extends StatefulWidget{
   static const String routeName = '/page_booking_details_list';
@@ -22,9 +24,19 @@ class PageBookingDetailsList extends StatefulWidget{
 class _PageBookingDetailsList extends State<PageBookingDetailsList> {
   bool _isLoading = true;
   String _pageContent = AppStrings.loadingPleaseWait;
+  List<BookingModel> _bookingList = [];
 
   Future<void> _loadData() async {
-    await Future.delayed(const Duration(seconds: 3));
+    try {
+      List<BookingModel> bookings = await BookingService().getBookings();
+      if (mounted) {
+        setState(() {
+          _bookingList = bookings;
+        });
+      }
+    } catch (e) {
+      print("Error loading bookings: $e");
+    }
 
     if (mounted) {
       setState(() {
@@ -88,7 +100,7 @@ class _PageBookingDetailsList extends State<PageBookingDetailsList> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                for(int i = 0; i < 5; i++)...[
+                for(var booking in _bookingList)...[
                   Container(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.only(
@@ -118,7 +130,7 @@ class _PageBookingDetailsList extends State<PageBookingDetailsList> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                "Gampaha to Nugegoda",
+                                booking.pickupLocation,
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontSize: 18,
@@ -151,7 +163,7 @@ class _PageBookingDetailsList extends State<PageBookingDetailsList> {
                             ],
                           ),
                           Text(
-                            "Bus No: ND-1234",
+                            "Bus No: ${booking.busNo ?? 'Pending'}",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontSize: 15,
@@ -159,7 +171,7 @@ class _PageBookingDetailsList extends State<PageBookingDetailsList> {
                             ),
                           ),
                           Text(
-                            "Booking ID: 123456789",
+                            "Booking ID: ${booking.busId ?? 'Pending'}", // Shortened ID
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontSize: 15,
@@ -167,7 +179,7 @@ class _PageBookingDetailsList extends State<PageBookingDetailsList> {
                             ),
                           ),
                           Text(
-                            "Date: 2025.11.11 - 12.25pm",
+                            "Date: ${booking.bookingDate.split('T')[0]}",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontSize: 15,
@@ -175,7 +187,7 @@ class _PageBookingDetailsList extends State<PageBookingDetailsList> {
                             ),
                           ),
                           Text(
-                            "Seats: 2",
+                            "Seats: ${booking.noOfSeats}",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               fontSize: 15,
